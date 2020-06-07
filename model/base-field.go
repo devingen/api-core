@@ -66,6 +66,20 @@ func (field Field) GetString(key string) string {
 	return value
 }
 
+func (field Field) SetInt(key string, value int) Field {
+	field[key] = value
+	return field
+}
+
+func (field Field) GetInt(key string) int {
+	// int values are populated as float64 when it's parsed from JSON
+	value, has := field[key].(float64)
+	if !has {
+		return 0
+	}
+	return int(value)
+}
+
 func (field Field) GetBool(key string) bool {
 	value, has := field[key].(bool)
 	if !has {

@@ -47,6 +47,35 @@ func (field ReverseReferenceField) GetFilter() *Filter {
 	return field.Field.GetFilter("filter")
 }
 
+func (field ReverseReferenceField) SetLimit(limit int) ReverseReferenceField {
+	field.Field.SetInt("limit", limit)
+	return field
+}
+
+func (field ReverseReferenceField) GetLimit() int {
+	return field.Field.GetInt("limit")
+}
+
+func (field ReverseReferenceField) GetSort() *SortConfig {
+	value, has := field.GetInterface("sort").(*SortConfig)
+	if !has {
+		valueInterface, hasInterface := field.GetInterface("sort").(map[string]interface{})
+		if !hasInterface {
+			return nil
+		}
+		return &SortConfig{
+			ID: valueInterface["id"].(string),
+			Order: int(valueInterface["order"].(float64)),
+		}
+	}
+	return value
+}
+
+func (field ReverseReferenceField) SetSort(sort *SortConfig) ReverseReferenceField {
+	field.Field["sort"] = sort
+	return field
+}
+
 func (field ReverseReferenceField) SetFields(fields []Field) ReverseReferenceField {
 	field.Field.SetFields(fields)
 	return field
