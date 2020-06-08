@@ -72,12 +72,16 @@ func (field Field) SetInt(key string, value int) Field {
 }
 
 func (field Field) GetInt(key string) int {
-	// int values are populated as float64 when it's parsed from JSON
-	value, has := field[key].(float64)
-	if !has {
+
+	switch v := field[key].(type) {
+	case int:
+		return v
+	case float64:
+		// int values are populated as float64 when it's parsed from JSON
+		return int(v)
+	default:
 		return 0
 	}
-	return int(value)
 }
 
 func (field Field) GetBool(key string) bool {
