@@ -33,9 +33,10 @@ func (dm DataModel) GetDBRef(key string) *DBRef {
 		if !hasRefAsMap {
 			return nil
 		}
+		id, _ := primitive.ObjectIDFromHex(dbrefAsMap["$id"].(string))
 		return &DBRef{
 			Ref:      dbrefAsMap["$ref"].(string),
-			ID:       dbrefAsMap["$id"].(string),
+			ID:       id,
 			Database: dbrefAsMap["$db"].(string),
 		}
 	}

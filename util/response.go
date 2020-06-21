@@ -4,12 +4,25 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/devingen/api-core/dto"
+	"github.com/devingen/api-core/model"
+	"net/http"
 )
 
 func BuildResponse(statusCode int, data interface{}, err error) (dto.Response, error) {
 
 	if err != nil {
-		return dto.Response{StatusCode: 500}, nil
+		// return dvn error in the response body
+		switch castedError := err.(type) {
+		case model.DVNError:
+			statusCode = castedError.StatusCode
+			data = castedError
+		case *model.DVNError:
+			statusCode = castedError.StatusCode
+			data = castedError
+		default:
+			statusCode = 418
+			data = model.NewStatusError(http.StatusInternalServerError)
+		}
 	}
 
 	body, err := json.Marshal(data)

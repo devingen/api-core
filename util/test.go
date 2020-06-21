@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/devingen/api-core/database"
-	"go.mongodb.org/mongo-driver/bson"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,7 +42,7 @@ func InsertData(db *database.Database, databaseName string, collectionName strin
 		return
 	}
 
-	_, err = collection.DeleteOne(context.TODO(), bson.M{"_id": data.(map[string]interface{})["_id"]})
+	collection.Drop(context.TODO())
 	_, err = collection.InsertOne(context.TODO(), data)
 	if err != nil {
 		return
