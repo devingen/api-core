@@ -17,6 +17,7 @@ func InsertDataFromFile(db *database.Database, databaseName string, collectionNa
 	var list []interface{}
 	ReadFile("./data/"+collectionName+".json", &list)
 
+	ClearData(db, databaseName, collectionName)
 	for _, item := range list {
 		InsertData(db, databaseName, collectionName, item)
 	}
@@ -36,13 +37,21 @@ func ReadFile(name string, list interface{}) {
 	json.Unmarshal(byteValue, &list)
 }
 
-func InsertData(db *database.Database, databaseName string, collectionName string, data interface{}) {
+func ClearData(db *database.Database, databaseName string, collectionName string) {
 	collection, err := db.ConnectToCollection(databaseName, collectionName)
 	if err != nil {
 		return
 	}
 
 	collection.Drop(context.TODO())
+}
+
+func InsertData(db *database.Database, databaseName string, collectionName string, data interface{}) {
+	collection, err := db.ConnectToCollection(databaseName, collectionName)
+	if err != nil {
+		return
+	}
+
 	_, err = collection.InsertOne(context.TODO(), data)
 	if err != nil {
 		return
