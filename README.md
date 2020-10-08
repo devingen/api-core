@@ -17,6 +17,12 @@ replace github.com/devingen/api-core => ../api-core
 Create a git tag with the desired version and push the tag.
 
 ```
-git tag -a v0.0.1 -m "initial version"
-git push origin v0.0.1
+# see tags
+git tag --list
+
+# create new tag
+git tag -a v0.0.8 -m "add authorization header to cors header list"
+
+# push new tag
+git push origin v0.0.8
 ```
