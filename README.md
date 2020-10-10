@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.8 -m "add authorization header to cors header list"
+git tag -a v0.0.11 -m "add update entry response"
 
 # push new tag
-git push origin v0.0.8
+git push origin v0.0.11
 ```
