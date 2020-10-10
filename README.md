@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.11 -m "add update entry response"
+git tag -a v0.0.12 -m "change dbref"
 
 # push new tag
-git push origin v0.0.11
+git push origin v0.0.12
 ```
