@@ -1,13 +1,13 @@
 package server
 
 import (
-	"github.com/devingen/api-core/dto"
+	"github.com/devingen/api-core/dvnruntime"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-func ReturnResponse(w http.ResponseWriter, response dto.Response, err error) {
+func ReturnResponse(w http.ResponseWriter, response dvnruntime.Response, err error) {
 
 	// set response headers
 	if response.Headers != nil {

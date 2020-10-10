@@ -3,12 +3,12 @@ package util
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/devingen/api-core/dto"
+	"github.com/devingen/api-core/dvnruntime"
 	"github.com/devingen/api-core/model"
 	"net/http"
 )
 
-func BuildResponse(statusCode int, data interface{}, err error) (dto.Response, error) {
+func BuildResponse(statusCode int, data interface{}, err error) (dvnruntime.Response, error) {
 
 	if err != nil {
 		// return dvn error in the response body
@@ -27,13 +27,13 @@ func BuildResponse(statusCode int, data interface{}, err error) (dto.Response, e
 
 	body, err := json.Marshal(data)
 	if err != nil {
-		return dto.Response{StatusCode: 500}, nil
+		return dvnruntime.Response{StatusCode: 500}, nil
 	}
 
 	var buf bytes.Buffer
 	json.HTMLEscape(&buf, body)
 
-	return dto.Response{
+	return dvnruntime.Response{
 		StatusCode:      statusCode,
 		IsBase64Encoded: false,
 		Body:            buf.String(),

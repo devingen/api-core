@@ -1,4 +1,4 @@
-package dto
+package dvnruntime
 
 type Response struct {
 	StatusCode      int               `json:"statusCode"`

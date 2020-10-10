@@ -1,4 +1,4 @@
-package dto
+package dvnruntime
 
 // RequestIdentity contains identity information for the request caller.
 type RequestIdentity struct {
@@ -41,4 +41,5 @@ type Request struct {
 	RequestContext        ProxyRequestContext `json:"requestContext"`
 	Body                  string              `json:"body"`
 	IsBase64Encoded       bool                `json:"isBase64Encoded,omitempty"`
+	IP                    string              `json:"ip"`
 }

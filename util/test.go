@@ -5,11 +5,28 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/devingen/api-core/database"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 )
+
+func ObjectIdFromHexIgnoreError(hex string) primitive.ObjectID {
+	id, _ := primitive.ObjectIDFromHex(hex)
+	return id
+}
+
+func InsertGoData(db *database.Database, databaseName string, collectionName string, list []interface{}) {
+
+	log.Println("Preparing collection:", collectionName)
+
+	ClearData(db, databaseName, collectionName)
+	for _, item := range list {
+		InsertData(db, databaseName, collectionName, item)
+	}
+	return
+}
 
 func InsertDataFromFile(db *database.Database, databaseName string, collectionName string) {
 
