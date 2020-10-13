@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.13 -m "add eq mongo object id comparison"
+git tag -a v0.0.14 -m "get header function to request, add data transfer field to field types"
 
 # push new tag
-git push origin v0.0.13
+git push origin v0.0.14
 ```

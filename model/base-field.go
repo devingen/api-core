@@ -12,6 +12,7 @@ const (
 	FieldTypeReverseReference  FieldType = "reverse-reference"
 	FieldTypeRelationReference FieldType = "relation-reference"
 	FieldTypeCollectionLookup  FieldType = "collection-lookup"
+	FieldTypeDataTransfer      FieldType = "data-transfer"
 )
 
 func New(fieldType FieldType, id string) Field {
