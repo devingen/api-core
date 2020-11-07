@@ -11,3 +11,7 @@ type UpdateEntryResponse struct {
 	UpdatedAt time.Time `json:"_updated"`
 	Revision  int       `json:"_revision"`
 }
+
+type DeleteEntryResponse struct {
+	ID string `json:"_id"`
+}

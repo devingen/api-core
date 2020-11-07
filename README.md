@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.15 -m "fix default error code"
+git tag -a v0.0.16 -m "add delete response dto"
 
 # push new tag
-git push origin v0.0.15
+git push origin v0.0.16
 ```
