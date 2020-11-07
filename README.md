@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.14 -m "get header function to request, add data transfer field to field types"
+git tag -a v0.0.15 -m "fix default error code"
 
 # push new tag
-git push origin v0.0.14
+git push origin v0.0.15
 ```

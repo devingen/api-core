@@ -20,8 +20,8 @@ func BuildResponse(statusCode int, data interface{}, err error) (dvnruntime.Resp
 			statusCode = castedError.StatusCode
 			data = castedError
 		default:
-			statusCode = 418
-			data = model.NewStatusError(http.StatusInternalServerError)
+			statusCode = http.StatusInternalServerError
+			data = model.NewError(http.StatusInternalServerError, err.Error())
 		}
 	}
 
