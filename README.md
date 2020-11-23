@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.16 -m "add delete response dto"
+git tag -a v0.0.18 -m "add limit to db query"
 
 # push new tag
-git push origin v0.0.16
+git push origin v0.0.18
 ```

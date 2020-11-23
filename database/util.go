@@ -40,14 +40,14 @@ func (s *Database) Aggregate(databaseName, collectionName string, condition []bs
 	return nil
 }
 
-func (s *Database) Query(databaseName, collectionName string, condition bson.M, appender appender) error {
+func (s *Database) Query(databaseName, collectionName string, condition bson.M, limit int64, appender appender) error {
 	collection, err := s.ConnectToCollection(databaseName, collectionName)
 	if err != nil {
 		return err
 	}
 
 	findOptions := options.Find()
-	findOptions.SetLimit(10)
+	findOptions.SetLimit(limit)
 
 	cur, err := collection.Find(context.TODO(), condition, findOptions)
 	if err != nil {
