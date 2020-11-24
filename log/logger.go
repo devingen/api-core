@@ -1,12 +1,12 @@
 package log
 
 import (
+	"github.com/devingen/api-core/dvnruntime"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	envRegion = "REGION"
-	envEnv    = "ENV"
+	ContextKeyLogger dvnruntime.ContextKey = "context-key-logger"
 )
 
 var logger *logrus.Entry
@@ -59,14 +59,20 @@ func WithFields(fields logrus.Fields) *logrus.Entry {
 	return logger.WithFields(fields)
 }
 
+var formatter = logrus.JSONFormatter{
+	FieldMap: logrus.FieldMap{
+		logrus.FieldKeyMsg: "message",
+	},
+}
+
 func Init() {
 	logBase := logrus.New()
-	logBase.SetFormatter(&logrus.JSONFormatter{})
+	logBase.SetFormatter(&formatter)
 	logger = logBase.WithFields(logrus.Fields{})
 }
 
 func InitWithBaseFields(baseFields logrus.Fields) {
 	logBase := logrus.New()
-	logBase.SetFormatter(&logrus.JSONFormatter{})
+	logBase.SetFormatter(&formatter)
 	logger = logBase.WithFields(baseFields)
 }

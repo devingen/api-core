@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 type appender func(cur *mongo.Cursor) error
@@ -21,7 +20,7 @@ func (s *Database) Aggregate(databaseName, collectionName string, condition []bs
 
 	cur, err := collection.Aggregate(context.TODO(), condition, options)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer cur.Close(context.TODO())
 
@@ -29,12 +28,12 @@ func (s *Database) Aggregate(databaseName, collectionName string, condition []bs
 
 		err := appender(cur)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	return nil
@@ -51,7 +50,7 @@ func (s *Database) Query(databaseName, collectionName string, condition bson.M, 
 
 	cur, err := collection.Find(context.TODO(), condition, findOptions)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer cur.Close(context.TODO())
 
@@ -59,12 +58,12 @@ func (s *Database) Query(databaseName, collectionName string, condition bson.M, 
 
 		err := appender(cur)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	return nil

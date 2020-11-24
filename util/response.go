@@ -25,8 +25,8 @@ func BuildResponse(statusCode int, data interface{}, err error) (dvnruntime.Resp
 		}
 	}
 
-	body, err := json.Marshal(data)
-	if err != nil {
+	body, jsonError := json.Marshal(data)
+	if jsonError != nil {
 		return dvnruntime.Response{StatusCode: 500}, nil
 	}
 
