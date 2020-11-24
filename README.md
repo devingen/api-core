@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.18 -m "add limit to db query"
+git tag -a v0.0.19 -m "add logger and uuid generator"
 
 # push new tag
-git push origin v0.0.18
+git push origin v0.0.19
 ```
