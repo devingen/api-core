@@ -1,39 +1,9 @@
 package server
 
 import (
-	"github.com/devingen/api-core/dvnruntime"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 )
-
-func ReturnResponse(w http.ResponseWriter, response dvnruntime.Response, err error) {
-
-	// set response headers
-	if response.Headers != nil {
-		for name, value := range response.Headers {
-			w.Header().Set(name, value)
-		}
-	}
-
-	// set response status
-	if response.StatusCode != 0 {
-		w.WriteHeader(response.StatusCode)
-	} else if err == nil {
-		w.WriteHeader(http.StatusOK)
-	} else {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-
-	// return response
-	if response.Body != "" {
-		_, err = w.Write([]byte(response.Body))
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-	}
-}
 
 // CORSRouterDecorator applies CORS headers to a mux.Router
 type CORSRouterDecorator struct {

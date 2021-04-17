@@ -1,6 +1,11 @@
-package dvnruntime
+package core
 
-import "strings"
+import (
+	"encoding/json"
+	"github.com/go-playground/validator/v10"
+	"net/http"
+	"strings"
+)
 
 // RequestIdentity contains identity information for the request caller.
 type RequestIdentity struct {
@@ -33,8 +38,11 @@ type ProxyRequestContext struct {
 
 // ProxyRequest contains data coming from the API Gateway proxy
 type Request struct {
+	RemoteAddr            string              `json:"remoteAddr"`
+	Proto                 string              `json:"proto"`
 	Resource              string              `json:"resource"` // The resource path defined in API Gateway
-	Path                  string              `json:"path"`     // The url path for the caller
+	Host                  string              `json:"host"`
+	Path                  string              `json:"path"` // The url path for the caller
 	HTTPMethod            string              `json:"httpMethod"`
 	Headers               map[string]string   `json:"headers"`
 	QueryStringParameters map[string]string   `json:"queryStringParameters"`
@@ -52,4 +60,44 @@ func (r *Request) GetHeader(key string) (string, bool) {
 		value, hasKey = r.Headers[strings.ToLower(key)]
 	}
 	return value, hasKey
+}
+
+var validate *validator.Validate
+
+func (r *Request) AssertBody(bodyValue interface{}) error {
+	err := r.ParseBody(bodyValue)
+	if err != nil {
+		return err
+	}
+
+	// validate body
+	if validate == nil {
+		validate = validator.New()
+	}
+	err = validate.Struct(bodyValue)
+
+	// return proper validation error
+	if err != nil {
+		switch castedError := err.(type) {
+		case validator.ValidationErrors:
+			return NewError(http.StatusBadRequest, castedError.Error())
+		default:
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *Request) ParseBody(bodyValue interface{}) error {
+	// assert body is present
+	if r.Body == "" {
+		return NewError(http.StatusBadRequest, "body-missing")
+	}
+
+	// parse body
+	err := json.Unmarshal([]byte(r.Body), &bodyValue)
+	if err != nil {
+		return err
+	}
+	return nil
 }
