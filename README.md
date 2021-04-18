@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.20 -m "remove fatal logs from database"
+git tag -a v0.0.22 -m "add validator setter"
 
 # push new tag
-git push origin v0.0.20
+git push origin v0.0.22
 ```

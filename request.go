@@ -64,6 +64,10 @@ func (r *Request) GetHeader(key string) (string, bool) {
 
 var validate *validator.Validate
 
+func SetValidator(v *validator.Validate) {
+	validate = v
+}
+
 func (r *Request) AssertBody(bodyValue interface{}) error {
 	err := r.ParseBody(bodyValue)
 	if err != nil {
