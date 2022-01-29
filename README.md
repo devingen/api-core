@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.22 -m "add validator setter"
+git tag -a v0.0.23 -m "refactor dvn error struct"
 
 # push new tag
-git push origin v0.0.22
+git push origin v0.0.23
 ```

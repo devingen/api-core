@@ -39,6 +39,21 @@ func (s *Database) Aggregate(ctx context.Context, databaseName, collectionName s
 	return nil
 }
 
+func (s *Database) AggregateMap(ctx context.Context, databaseName, collectionName string, query []bson.M) ([]*map[string]interface{}, error) {
+
+	result := make([]*map[string]interface{}, 0)
+	err := s.Aggregate(ctx, databaseName, collectionName, query, func(cur *mongo.Cursor) error {
+		var data map[string]interface{}
+		err := cur.Decode(&data)
+		if err != nil {
+			return err
+		}
+		result = append(result, &data)
+		return nil
+	})
+	return result, err
+}
+
 func (s *Database) Get(ctx context.Context, databaseName, collectionName, id string, item interface{}) error {
 	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {

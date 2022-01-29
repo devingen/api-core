@@ -3,9 +3,10 @@ package core
 import "net/http"
 
 type DVNError struct {
-	Message    string `json:"error,omitempty"`
-	ErrorCode  int    `json:"errorCode,omitempty"`
-	StatusCode int    `json:"-"`
+	Messages   []string `json:"errors,omitempty"`
+	Message    string   `json:"error,omitempty"`
+	ErrorCode  int      `json:"errorCode,omitempty"`
+	StatusCode int      `json:"-"`
 }
 
 func (fe DVNError) Error() string {
@@ -25,6 +26,13 @@ func NewStatusError(statusCode int) *DVNError {
 func NewError(statusCode int, errorMessage string) *DVNError {
 	return &DVNError{
 		Message:    errorMessage,
+		StatusCode: statusCode,
+	}
+}
+
+func NewErrors(statusCode int, errorMessages []string) *DVNError {
+	return &DVNError{
+		Messages:   errorMessages,
 		StatusCode: statusCode,
 	}
 }

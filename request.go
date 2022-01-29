@@ -84,7 +84,11 @@ func (r *Request) AssertBody(bodyValue interface{}) error {
 	if err != nil {
 		switch castedError := err.(type) {
 		case validator.ValidationErrors:
-			return NewError(http.StatusBadRequest, castedError.Error())
+			errors := make([]string, len(castedError))
+			for i, validationError := range castedError {
+				errors[i] = validationError.Error()
+			}
+			return NewErrors(http.StatusBadRequest, errors)
 		default:
 			return err
 		}
