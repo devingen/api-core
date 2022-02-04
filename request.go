@@ -68,6 +68,10 @@ func SetValidator(v *validator.Validate) {
 	validate = v
 }
 
+func GetValidator() *validator.Validate {
+	return validate
+}
+
 func (r *Request) AssertBody(bodyValue interface{}) error {
 	err := r.ParseBody(bodyValue)
 	if err != nil {
