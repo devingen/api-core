@@ -16,13 +16,13 @@ func WithLambdaHandler(ctx context.Context, f core.Controller) AWSLambdaHandler 
 		req := adaptAWSLambdaRequest(awsReq)
 
 		// execute function
-		result, status, err := f(ctx, req)
+		response, err := f(ctx, req)
 
 		// convert response to our custom response
-		response, err := buildHTTPResponse(status, result, err)
+		httpResponse, err := buildHTTPResponse(response, err)
 
 		// write response data
-		return adaptAWSLambdaResponse(response, err)
+		return adaptAWSLambdaResponse(httpResponse, err)
 	}
 }
 
@@ -32,7 +32,7 @@ func adaptAWSLambdaRequest(req events.APIGatewayProxyRequest) core.Request {
 		Path:                  req.Path,
 		HTTPMethod:            req.HTTPMethod,
 		Headers:               req.Headers,
-		QueryStringParameters: req.QueryStringParameters,
+		QueryStringParameters: req.MultiValueQueryStringParameters,
 		PathParameters:        req.PathParameters,
 		StageVariables:        req.StageVariables,
 		RequestContext: core.ProxyRequestContext{
@@ -68,7 +68,7 @@ func adaptAWSLambdaResponse(resp core.Response, err error) (events.APIGatewayPro
 	awsResponse := events.APIGatewayProxyResponse{
 		StatusCode:      resp.StatusCode,
 		Headers:         resp.Headers,
-		Body:            resp.Body,
+		Body:            resp.RawBody,
 		IsBase64Encoded: resp.IsBase64Encoded,
 	}
 	return awsResponse, err

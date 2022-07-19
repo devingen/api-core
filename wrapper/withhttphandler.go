@@ -4,14 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	core "github.com/devingen/api-core"
 	"github.com/devingen/api-core/util"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 )
 
 // WithHTTPHandler wraps the controller with the HTTP Handler func.
@@ -21,13 +19,13 @@ func WithHTTPHandler(ctx context.Context, f core.Controller) func(http.ResponseW
 		req := adaptHTTPRequest(r)
 
 		// execute function
-		result, status, err := f(ctx, req)
+		response, err := f(ctx, req)
 
 		// convert response to our custom response
-		response, err := buildHTTPResponse(status, result, err)
+		httpResponse, err := buildHTTPResponse(response, err)
 
 		// write response data
-		returnHTTPResponse(w, response, err)
+		returnHTTPResponse(w, httpResponse, err)
 	}
 }
 
@@ -42,7 +40,7 @@ func adaptHTTPRequest(req *http.Request) core.Request {
 		Path:                  req.URL.Path,
 		HTTPMethod:            req.Method,
 		Headers:               convertHeaders(req.Header),
-		QueryStringParameters: convertQueryParams(req.URL.Query()),
+		QueryStringParameters: req.URL.Query(),
 		PathParameters:        mux.Vars(req),
 		StageVariables:        nil,
 		RequestContext:        core.ProxyRequestContext{},
@@ -60,15 +58,22 @@ func convertHeaders(header http.Header) map[string]string {
 	return headers
 }
 
-func convertQueryParams(values url.Values) map[string]string {
-	params := map[string]string{}
-	for k, v := range values {
-		params[k] = v[0]
-	}
-	return params
-}
+func buildHTTPResponse(response *core.Response, err error) (core.Response, error) {
+	var statusCode int = 200
+	var data interface{} = nil
+	var headers = map[string]string{}
+	var rawBody = ""
 
-func buildHTTPResponse(statusCode int, data interface{}, err error) (core.Response, error) {
+	if response != nil {
+		if response.StatusCode != 0 {
+			statusCode = response.StatusCode
+		}
+		if response.Headers != nil {
+			headers = response.Headers
+		}
+		data = response.Body
+		rawBody = response.RawBody
+	}
 
 	if err != nil {
 		// return dvn error in the response body
@@ -85,18 +90,25 @@ func buildHTTPResponse(statusCode int, data interface{}, err error) (core.Respon
 		}
 	}
 
+	if _, ok := headers["Content-Type"]; !ok {
+		// set default content type header
+		headers["Content-Type"] = "application/json"
+	}
+
+	// TODO don't do this here.
+	//   implement a wrapper util function and leave this to the developer's choice to add or not
+	headers["Access-Control-Allow-Origin"] = "*"
+	headers["Access-Control-Allow-Credentials"] = "true"
+
 	resp := core.Response{
 		StatusCode:      statusCode,
 		IsBase64Encoded: false,
-
-		Headers: map[string]string{
-			"Content-Type":                     "application/json",
-			"Access-Control-Allow-Origin":      "*",
-			"Access-Control-Allow-Credentials": "true",
-		},
+		Headers:         headers,
+		RawBody:         rawBody,
 	}
 
 	if data != nil {
+		// generate the RawBody if the Body is not empty
 		body, jsonError := json.Marshal(data)
 		if jsonError != nil {
 			return core.Response{StatusCode: 500}, nil
@@ -104,7 +116,7 @@ func buildHTTPResponse(statusCode int, data interface{}, err error) (core.Respon
 
 		var buf bytes.Buffer
 		json.HTMLEscape(&buf, body)
-		resp.Body = buf.String()
+		resp.RawBody = buf.String()
 	}
 	return resp, nil
 }
@@ -129,12 +141,7 @@ func returnHTTPResponse(w http.ResponseWriter, response core.Response, err error
 
 	// return response
 	if response.Body != "" {
-		if response.StatusCode == 204 {
-			fmt.Println("--")
-			fmt.Println(response.Body)
-			fmt.Println("--")
-		}
-		_, err = w.Write([]byte(response.Body))
+		_, err = w.Write([]byte(response.RawBody))
 		if err != nil {
 			log.Println(err.Error())
 			return

@@ -10,7 +10,7 @@ import (
 
 // WithLogger wraps the controller func by adding the logger to the context.
 func WithLogger(level string, f core.Controller) core.Controller {
-	return func(ctx context.Context, req core.Request) (interface{}, int, error) {
+	return func(ctx context.Context, req core.Request) (*core.Response, error) {
 
 		// create logger
 		logger := logrus.New().WithFields(logrus.Fields{
@@ -26,7 +26,7 @@ func WithLogger(level string, f core.Controller) core.Controller {
 		ctxWithLogger := log.WithLogger(ctx, logger)
 
 		// execute function
-		result, status, err := f(ctxWithLogger, req)
+		response, err := f(ctxWithLogger, req)
 
 		if err != nil {
 			logger.WithFields(logrus.Fields{
@@ -35,6 +35,6 @@ func WithLogger(level string, f core.Controller) core.Controller {
 			// don't return, let it build a proper error response
 		}
 
-		return result, status, err
+		return response, err
 	}
 }

@@ -14,7 +14,7 @@ import (
 // RecordAccess logs the request details with Apache format.
 // See http://httpd.apache.org/docs/current/mod/mod_log_config.html
 func RecordAccess(f core.Controller) core.Controller {
-	return func(ctx context.Context, req core.Request) (interface{}, int, error) {
+	return func(ctx context.Context, req core.Request) (*core.Response, error) {
 		clientIP := req.RemoteAddr
 		if colon := strings.LastIndex(clientIP, ":"); colon != -1 {
 			clientIP = clientIP[:colon]
@@ -22,7 +22,7 @@ func RecordAccess(f core.Controller) core.Controller {
 
 		startTime := time.Now()
 
-		result, status, err := f(ctx, req)
+		response, err := f(ctx, req)
 
 		finishTime := time.Now()
 
@@ -37,7 +37,7 @@ func RecordAccess(f core.Controller) core.Controller {
 		}
 		record.Log(os.Stderr)
 
-		return result, status, err
+		return response, err
 	}
 }
 

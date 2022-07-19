@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/schema"
 	"net/http"
 	"strings"
 )
@@ -45,7 +46,7 @@ type Request struct {
 	Path                  string              `json:"path"` // The url path for the caller
 	HTTPMethod            string              `json:"httpMethod"`
 	Headers               map[string]string   `json:"headers"`
-	QueryStringParameters map[string]string   `json:"queryStringParameters"`
+	QueryStringParameters map[string][]string `json:"queryStringParameters"`
 	PathParameters        map[string]string   `json:"pathParameters"`
 	StageVariables        map[string]string   `json:"stageVariables"`
 	RequestContext        ProxyRequestContext `json:"requestContext"`
@@ -60,6 +61,26 @@ func (r *Request) GetHeader(key string) (string, bool) {
 		value, hasKey = r.Headers[strings.ToLower(key)]
 	}
 	return value, hasKey
+}
+
+func (r *Request) GetQueryStringParameter(key string) (string, bool) {
+	value, hasKey := r.QueryStringParameters[key]
+	if !hasKey {
+		value, hasKey = r.QueryStringParameters[strings.ToLower(key)]
+	}
+	return value[0], hasKey
+}
+
+func (r *Request) AssertQueryStringParameter(key string) (string, error) {
+	value, hasKey := r.QueryStringParameters[key]
+	if !hasKey {
+		return "", NewError(http.StatusBadRequest, "missing-query-parameter:"+key)
+	}
+	return value[0], nil
+}
+
+func (r *Request) ParseQueryStringParameters(dst interface{}) error {
+	return schema.NewDecoder().Decode(dst, r.QueryStringParameters)
 }
 
 var validate *validator.Validate
