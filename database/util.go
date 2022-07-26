@@ -114,14 +114,22 @@ func (s *Database) FindOne(ctx context.Context, databaseName, collectionName str
 	return collection.FindOne(ctx, query, findOptions).Decode(item)
 }
 
-func (s *Database) Find(ctx context.Context, databaseName, collectionName string, query bson.M, limit int64, appender appender) error {
+type FindOptions struct {
+	Limit int64
+	Sort  interface{}
+	Skip  int64
+}
+
+func (s *Database) Find(ctx context.Context, databaseName, collectionName string, query bson.M, queryOptions FindOptions, appender appender) error {
 	collection, err := s.ConnectToCollection(databaseName, collectionName)
 	if err != nil {
 		return err
 	}
 
 	findOptions := options.Find()
-	findOptions.SetLimit(limit)
+	findOptions.SetLimit(queryOptions.Limit)
+	findOptions.SetSort(queryOptions.Sort)
+	findOptions.SetSkip(queryOptions.Skip)
 
 	cur, err := collection.Find(ctx, query, findOptions)
 	if err != nil {

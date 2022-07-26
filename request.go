@@ -63,12 +63,23 @@ func (r *Request) GetHeader(key string) (string, bool) {
 	return value, hasKey
 }
 
+func (r *Request) AssertPathParameter(key string) (string, error) {
+	value, hasKey := r.PathParameters[key]
+	if !hasKey {
+		return "", NewError(http.StatusBadRequest, "missing-path-parameter:"+key)
+	}
+	return value, nil
+}
+
 func (r *Request) GetQueryStringParameter(key string) (string, bool) {
 	value, hasKey := r.QueryStringParameters[key]
 	if !hasKey {
 		value, hasKey = r.QueryStringParameters[strings.ToLower(key)]
 	}
-	return value[0], hasKey
+	if len(value) > 0 {
+		return value[0], hasKey
+	}
+	return "", false
 }
 
 func (r *Request) AssertQueryStringParameter(key string) (string, error) {
@@ -87,6 +98,10 @@ var validate *validator.Validate
 
 func SetValidator(v *validator.Validate) {
 	validate = v
+}
+
+func GetValidator() *validator.Validate {
+	return validate
 }
 
 func (r *Request) AssertBody(bodyValue interface{}) error {
