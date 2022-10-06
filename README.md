@@ -21,8 +21,8 @@ Create a git tag with the desired version and push the tag.
 git tag --list
 
 # create new tag
-git tag -a v0.0.26 -m "add database find options"
+git tag -a v0.0.27 -m "change cors handling, convert all headers to lowercase"
 
 # push new tag
-git push origin v0.0.26
+git push origin v0.0.27
 ```

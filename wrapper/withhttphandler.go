@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // WithHTTPHandler wraps the controller with the HTTP Handler func.
@@ -53,7 +54,7 @@ func adaptHTTPRequest(req *http.Request) core.Request {
 func convertHeaders(header http.Header) map[string]string {
 	headers := map[string]string{}
 	for k, v := range header {
-		headers[k] = v[0]
+		headers[strings.ToLower(k)] = v[0]
 	}
 	return headers
 }

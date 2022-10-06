@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
 	core "github.com/devingen/api-core"
+	"strings"
 )
 
 type AWSLambdaHandler = func(ctx context.Context, awsReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
@@ -31,7 +32,7 @@ func adaptAWSLambdaRequest(req events.APIGatewayProxyRequest) core.Request {
 		Resource:              req.Resource,
 		Path:                  req.Path,
 		HTTPMethod:            req.HTTPMethod,
-		Headers:               req.Headers,
+		Headers:               convertHeaderNamesToLowercase(req.Headers),
 		QueryStringParameters: req.MultiValueQueryStringParameters,
 		PathParameters:        req.PathParameters,
 		StageVariables:        req.StageVariables,
@@ -62,6 +63,14 @@ func adaptAWSLambdaRequest(req events.APIGatewayProxyRequest) core.Request {
 		IsBase64Encoded: req.IsBase64Encoded,
 		IP:              req.RequestContext.Identity.SourceIP,
 	}
+}
+
+func convertHeaderNamesToLowercase(header map[string]string) map[string]string {
+	headers := map[string]string{}
+	for k, v := range header {
+		headers[strings.ToLower(k)] = v
+	}
+	return headers
 }
 
 func adaptAWSLambdaResponse(resp core.Response, err error) (events.APIGatewayProxyResponse, error) {
