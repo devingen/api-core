@@ -4,7 +4,6 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 func New(URI string) (*Database, error) {
@@ -30,8 +29,6 @@ func (s *Database) ConnectWithURI(URI string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Connected to MongoDB")
-
 	return nil
 }
 
