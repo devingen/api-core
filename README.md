@@ -14,15 +14,13 @@ replace github.com/devingen/api-core => ../api-core
 
 ### Releasing a new version
 
-Create a git tag with the desired version and push the tag.
+Check the existing tags and releases on the repo to avoid conflicts and override.
+```
+git tag --list
+```
+
+Create a new release.
 
 ```
-# see tags
-git tag --list
-
-# create new tag
-git tag -a v0.0.27 -m "change cors handling, convert all headers to lowercase"
-
-# push new tag
-git push origin v0.0.27
+make release VERSION=0.1.0
 ```
