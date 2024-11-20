@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -111,4 +112,29 @@ func (dm DataModel) GetFieldsForKey(key string) []Field {
 
 func (dm DataModel) GetInterface(key string) interface{} {
 	return dm[key]
+}
+
+// ToStruct converts DataModel into T.
+// Ex: core_model.ToStruct[model.UserMeta](response.Results[0])
+func ToStruct[T any](dm *DataModel) *T {
+	bytes, err := json.Marshal(dm)
+	if err != nil {
+		return nil
+	}
+
+	var result T
+	if err := json.Unmarshal(bytes, &result); err != nil {
+		return nil
+	}
+	return &result
+}
+
+// ToStructList converts DataModel list into T list.
+// Ex: core_model.ToStructList[model.User](response.Results)
+func ToStructList[T any](dmList []*DataModel) []T {
+	list := make([]T, len(dmList))
+	for i, dm := range dmList {
+		list[i] = *ToStruct[T](dm)
+	}
+	return list
 }

@@ -1,6 +1,6 @@
 module github.com/devingen/api-core
 
-go 1.12
+go 1.22
 
 require (
 	github.com/aws/aws-lambda-go v1.16.0
