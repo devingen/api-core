@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,7 +17,11 @@ func (s *Database) Aggregate(ctx context.Context, databaseName, collectionName s
 		return err
 	}
 
-	options := options.Aggregate()
+	options := options.Aggregate().
+		SetCollation(&options.Collation{ // Make the $sort operations case-insensitive
+			Locale:   "en",
+			Strength: 2,
+		})
 
 	cur, err := collection.Aggregate(ctx, condition, options)
 	if err != nil {
