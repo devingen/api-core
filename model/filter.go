@@ -27,6 +27,8 @@ const (
 	ComparisonNcontain   Comparison = "ncontain"
 	ComparisonSimilar    Comparison = "similar"
 	ComparisonDifferent  Comparison = "different"
+	ComparisonEmpty      Comparison = "empty"
+	ComparisonNotEmpty   Comparison = "nempty"
 )
 
 type Filter struct {
@@ -47,6 +49,12 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 		return bson.M{"$" + string(c.Operator): conditions}
 	}
 
+	if c.Comparison == ComparisonNotEmpty {
+		return bson.M{c.FieldId: bson.M{"$exists": true}}
+	} else if c.Comparison == ComparisonEmpty {
+		return bson.M{c.FieldId: bson.M{"$exists": false}}
+	}
+
 	field := config.GetField(c.FieldId)
 	if field == nil {
 		// it may be a filter for an inner field of a relation. Ex: { "fieldId": "organisation._id" }
@@ -63,6 +71,12 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 		if c.Comparison == ComparisonContain {
 			return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}
 		}
+		if c.Comparison == ComparisonNcontain {
+			return bson.M{c.FieldId: bson.M{"$regex": "^((?!" + c.FieldValue.(string) + ").)*$", "$options": "i"}}
+		}
+		return bson.M{c.FieldId: bson.M{"$" + string(c.Comparison): c.FieldValue}}
+	}
+	if field.GetType() == FieldTypeNumber {
 		return bson.M{c.FieldId: bson.M{"$" + string(c.Comparison): c.FieldValue}}
 	}
 	return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}

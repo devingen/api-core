@@ -8,6 +8,7 @@ const (
 	FieldTypeAny               FieldType = "any" // used to fetch data without manipulating the inner data or type
 	FieldTypeBoolean           FieldType = "boolean"
 	FieldTypeText              FieldType = "text"
+	FieldTypeNumber            FieldType = "number"
 	FieldTypeReference         FieldType = "reference"
 	FieldTypeReverseReference  FieldType = "reverse-reference"
 	FieldTypeRelationReference FieldType = "relation-reference"
