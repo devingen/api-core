@@ -79,6 +79,14 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 	if field.GetType() == FieldTypeNumber {
 		return bson.M{c.FieldId: bson.M{"$" + string(c.Comparison): c.FieldValue}}
 	}
+	if field.GetType() == FieldTypeBoolean {
+		return bson.M{c.FieldId: bson.M{"$" + string(c.Comparison): c.FieldValue}}
+	}
+	if c.Comparison == ComparisonNe {
+		return bson.M{c.FieldId: bson.M{"$ne": c.FieldValue}}
+	}
+
+	// Who uses this default step?
 	return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}
 }
 
