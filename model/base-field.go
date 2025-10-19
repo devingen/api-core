@@ -7,6 +7,7 @@ type FieldType string
 const (
 	FieldTypeAny               FieldType = "any" // used to fetch data without manipulating the inner data or type
 	FieldTypeBoolean           FieldType = "boolean"
+	FieldTypeDate              FieldType = "date"
 	FieldTypeText              FieldType = "text"
 	FieldTypeNumber            FieldType = "number"
 	FieldTypeReference         FieldType = "reference"
