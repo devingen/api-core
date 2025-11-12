@@ -1,6 +1,7 @@
 package model
 
 import (
+	"regexp"
 	"strconv"
 	"time"
 
@@ -201,7 +202,7 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 	if field == nil {
 		// it may be a filter for an inner field of a relation. Ex: { "fieldId": "organisation._id" }
 		if c.Comparison == ComparisonContain {
-			return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}
+			return bson.M{c.FieldId: bson.M{"$regex": regexp.QuoteMeta(c.FieldValue.(string)), "$options": "i"}}
 		}
 		if c.Comparison == ComparisonEqMongoOID {
 			oid, _ := primitive.ObjectIDFromHex(c.FieldValue.(string))
@@ -211,10 +212,10 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 	}
 	if field.GetType() == FieldTypeText {
 		if c.Comparison == ComparisonContain {
-			return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}
+			return bson.M{c.FieldId: bson.M{"$regex": regexp.QuoteMeta(c.FieldValue.(string)), "$options": "i"}}
 		}
 		if c.Comparison == ComparisonNcontain {
-			return bson.M{c.FieldId: bson.M{"$regex": "^((?!" + c.FieldValue.(string) + ").)*$", "$options": "i"}}
+			return bson.M{c.FieldId: bson.M{"$regex": "^((?!" + regexp.QuoteMeta(c.FieldValue.(string)) + ").)*$", "$options": "i"}}
 		}
 		return bson.M{c.FieldId: bson.M{"$" + string(c.Comparison): c.FieldValue}}
 	}
@@ -257,7 +258,7 @@ func (c Filter) ToMatchQuery(config *QueryConfig) bson.M {
 	}
 
 	// Who uses this default step?
-	return bson.M{c.FieldId: bson.M{"$regex": c.FieldValue, "$options": "i"}}
+	return bson.M{c.FieldId: bson.M{"$regex": regexp.QuoteMeta(c.FieldValue.(string)), "$options": "i"}}
 }
 
 func (c Filter) ToFilterQuery(name string) bson.M {
